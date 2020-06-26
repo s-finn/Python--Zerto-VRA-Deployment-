@@ -13,7 +13,7 @@ import json
 from requests.auth import HTTPBasicAuth
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-
+from time import sleep
 
 #Declaring Environment variables 
 zvm_ip = "ZVMIP"
