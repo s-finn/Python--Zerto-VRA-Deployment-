@@ -16,12 +16,12 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 from time import sleep
 
 #Declaring Environment variables 
-zvm_ip = "ZVM IP"
-zvm_u = "ZVM user"
-zvm_p = "ZVM password" 
-base_url = "https://"+zvm_ip+":9669/v1"
-session = base_url+"/session/add"
-vrainstall_url = base_url+"/vras"
+zvm_ip = "ZVMIP"
+zvm_u = "ZVMUser"
+zvm_p = "ZVMPassword" 
+base_url = f"https://{zvm_ip}:9669/v1"
+session = f"{base_url}/session/add"
+vrainstall_url = f"{base_url}/vras"
 
 ###Functions####
 def login(session_url, zvm_user, zvm_password):
@@ -49,24 +49,24 @@ headers = {
 }
 
 #Gather ZVM Site ID for future use
-site_url = base_url+"/localsite"
+site_url = f"{base_url}/localsite"
 site_return = requests.get(site_url, headers=headers, verify=False)
 site_return = site_return.json()
 site_id = site_return.get('SiteIdentifier')
 
 #Gather network IDs for future use
-network_url = base_url + "/virtualizationsites/"+site_id+"/networks"
+network_url = f"{base_url}/virtualizationsites/{site_id}/networks"
 network_ids = requests.get(network_url, headers=headers, verify=False)
 network_ids = network_ids.json()
 
 
 #Gather host IDs for future use
-host_url = base_url + "/virtualizationsites/"+site_id+"/hosts"
+host_url = f"{base_url}/virtualizationsites/{site_id}/hosts"
 host_ids = requests.get(host_url, headers=headers, verify=False)
 host_ids = host_ids.json()
 
 #Gather Datastore IDs for future use
-datastore_url = base_url + "/virtualizationsites/"+site_id+"/datastores"
+datastore_url = f"{base_url}/virtualizationsites/{site_id}"/datastores"
 datastore_ids = requests.get(datastore_url, headers=headers, verify=False)
 datastore_ids = datastore_ids.json()
 
