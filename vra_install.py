@@ -13,7 +13,7 @@ import json
 from requests.auth import HTTPBasicAuth
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-from time import sleep
+
 
 #Declaring Environment variables 
 zvm_ip = "ZVMIP"
@@ -66,13 +66,13 @@ host_ids = requests.get(host_url, headers=headers, verify=False)
 host_ids = host_ids.json()
 
 #Gather Datastore IDs for future use
-datastore_url = f"{base_url}/virtualizationsites/{site_id}"/datastores"
+datastore_url = f"{base_url}/virtualizationsites/{site_id}/datastores"
 datastore_ids = requests.get(datastore_url, headers=headers, verify=False)
 datastore_ids = datastore_ids.json()
 
 
 #Read in JSON configuration file 
-with open('File location for vras.json', 'r') as f:
+with open('vra_json file path', 'r') as f:
    vra_configuration = json.load(f)
 f.closed
 
@@ -80,15 +80,15 @@ f.closed
 #Iterate through each host listed in vras JSON
 #Gather MoRefs, IPs to POST JSON request 
 
-for host in vra_configuration: 
-   datastore_name = vra_configuration.get(host)[0].get('DatastoreName')
-   network_name = vra_configuration.get(host)[0].get('PortGroup')
-   host_name = host
-   memory = vra_configuration.get(host)[0].get('MemoryGB')
-   vra_group = vra_configuration.get(host)[0].get('VRAGroup')
-   vra_gateway = vra_configuration.get(host)[0].get('StaticInfo')[0]['DefaultGateway']
-   vra_subnet = vra_configuration.get(host)[0].get('StaticInfo')[1]['SubnetMask']
-   vra_ip = vra_configuration.get(host)[0].get('StaticInfo')[2]['VRAIPAddress']
+for host in vra_configuration['Hosts']: 
+   datastore_name = host['DatastoreName']
+   network_name = host['PortGroup']
+   host_name = host['ESXiHostName']
+   memory = host['MemoryGB']
+   vra_group = host['VRAGroup']
+   vra_gateway = host['DefaultGateway']
+   vra_subnet = host['SubnetMask']
+   vra_ip = host['VRAIPAddress']
 
    #Iterate through all networks returned by Zerto to find MoRef
    for network in network_ids: 
@@ -131,7 +131,8 @@ for host in vra_configuration:
    response = requests.post(vrainstall_url, data=vra_json, headers=headers, verify=False)
    if response.status_code != 200:
       print(response.text)
-   #Figure out a way to sleep 30 seconds
-   #Print out json status code response 
+   
+   #Wait 30 seconds between VRA Installation tasks 
+   sleep(30)
 print("")
 
